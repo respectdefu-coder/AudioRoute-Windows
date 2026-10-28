@@ -1,0 +1,49 @@
+name: Publish AudioRoute v1.0.2
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GIT_AUTHOR_NAME: respectdefu-coder
+      GIT_AUTHOR_EMAIL: 268625849+respectdefu-coder@users.noreply.github.com
+      GIT_COMMITTER_NAME: respectdefu-coder
+      GIT_COMMITTER_EMAIL: 268625849+respectdefu-coder@users.noreply.github.com
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode and verify package
+        run: |
+          base64 --decode downloads/AudioRoute-Windows.zip.b64 > downloads/AudioRoute-Windows.zip
+          echo '8d3ee3fb6cbe24717dd845633e5bb8ba6654334a074626da480929d753c57863  downloads/AudioRoute-Windows.zip' | sha256sum --check
+      - name: Update source
+        shell: python
+        run: |
+          from pathlib import Path
+          import zipfile
+          root = Path.cwd().resolve()
+          with zipfile.ZipFile('downloads/AudioRoute-Windows.zip') as archive:
+              for entry in archive.infolist():
+                  parts = Path(entry.filename).parts
+                  if not parts or parts[0] != 'AudioRoute':
+                      raise RuntimeError('Unexpected archive layout')
+                  if len(parts) < 2 or entry.is_dir():
+                      continue
+                  relative = Path(*parts[1:])
+                  target = (root / relative).resolve()
+                  if not target.is_relative_to(root) or '.git' in relative.parts:
+                      raise RuntimeError('Unsafe archive entry')
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  target.write_bytes(archive.read(entry))
+      - name: Commit anonymous update and remove temporary files
+        run: |
+          rm -f .github/workflows/publish.yml downloads/AudioRoute-Windows.zip.b64
+          git add --all
+          git commit -m 'Fix executable browsing for process-name rules'
+          git push origin HEAD:main
+      - name: Publish v1.0.2
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v1.0.2 downloads/AudioRoute-Windows.zip --target "$(git rev-parse HEAD)" --title 'AudioRoute v1.0.2' --notes '修复进程名规则的浏览按钮：选择 EXE 后自动填写进程名，完整路径模式保留完整路径，取消不清空原内容，标题与域名模式隐藏文件按钮。64 项测试通过。'
