@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>WinExe</OutputType><RootNamespace>AudioRoute</RootNamespace><AssemblyName>AudioRoute</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion><OutputPath>bin\</OutputPath>
+    <ApplicationManifest>app.manifest</ApplicationManifest><Optimize>true</Optimize><WarningLevel>4</WarningLevel>
+    <ApplicationIcon>assets\AudioRoute.ico</ApplicationIcon>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System"/><Reference Include="System.Core"/><Reference Include="System.Drawing"/>
+    <Reference Include="System.Windows.Forms"/><Reference Include="System.Runtime.Serialization"/>
+    <Compile Include="src\*.cs"/><None Include="app.config"/><None Include="app.manifest"/>
+    <EmbeddedResource Include="assets\AudioRoute.ico"><LogicalName>AudioRoute.App.ico</LogicalName></EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+</Project>

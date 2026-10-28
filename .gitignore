@@ -1,0 +1,11 @@
+bin/
+obj/
+*.user
+*.suo
+settings.json
+settings.json.*
+events.log*
+*diagnostics*.txt
+*.error.txt
+*.pdb
+TestResults/

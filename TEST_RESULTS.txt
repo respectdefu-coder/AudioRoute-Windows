@@ -1,0 +1,60 @@
+Built: bin/AudioRoute.exe
+PASS: case insensitive process .exe suffix
+PASS: process name containing a dot is preserved
+PASS: process name must be exact
+PASS: background process excluded for foreground rule
+PASS: full path case insensitive
+PASS: same executable in other directory excluded
+PASS: browser title detected
+PASS: non-browser title excluded
+PASS: generic window title match
+PASS: window foreground filter
+PASS: domain token allows subdomain in browser title
+PASS: domain false-positive boundaries excluded
+PASS: domain not guessed from title without domain
+PASS: invalid domain rejected
+PASS: higher priority wins
+PASS: stable equal-priority ordering
+PASS: disabled rule skipped
+PASS: offline high-priority device skipped
+PASS: process exit releases rule
+PASS: idle fallback selected
+PASS: manual selection retained during idle
+PASS: active automatic rule takes precedence over manual
+PASS: manual choice restored after rule ends
+PASS: offline manual device uses fallback
+PASS: all devices offline means no switching
+PASS: pause prevents all auto switching
+PASS: activation debounce
+PASS: stable activation becomes actionable
+PASS: already default avoids redundant writes
+PASS: cooldown and release debounce
+PASS: release becomes actionable after cooldown
+PASS: failed switch backs off five seconds
+PASS: flapping target restarts debounce
+PASS: manual switch has cooldown
+PASS: both multimedia and console roles checked
+PASS: communications role opt-in
+PASS: JSON roundtrip including manual selection
+PASS: atomic save creates backup
+PASS: corrupt config recovers previous backup
+PASS: corrupt original preserved
+All 40 tests passed. No system default audio device was changed.
+PASS: custom multi-size icon is embedded in application assembly
+PASS: main window and tray use the custom application icon
+PASS: real process sampling drives one automatic switch through fake audio backend
+PASS: native EnumWindows observes a live application window
+PASS: fallback combo retains configured device after showing form
+PASS: volume shown from current endpoint
+PASS: slider writes normalized endpoint volume
+PASS: mute control writes endpoint mute
+PASS: external volume and mute changes reflected
+PASS: second-launch activation message reaches hidden main window
+PASS: hidden tray window is restored without duplicate-instance dialog
+PASS: second-launch activation message reaches minimized window
+PASS: minimized window is restored on repeated launch
+PASS: manual switch persists and remains stable without matching rules
+PASS: new rule displays the first available device
+PASS: rule editor saves typed trigger and selected output
+PASS: first launch explicitly displays keep-current fallback option
+All 17 UI integration tests passed. Audio backend was simulated; system audio was not changed.

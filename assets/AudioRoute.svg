@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>AudioRoute</title>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#195aa6"/>
+  <path d="M13 26h9l13-10v32L22 38h-9z" fill="#fff"/>
+  <path d="M41 23h10v-5l10 9-10 9v-5H41zM58 39H48v-5l-10 9 10 9v-5h10z" fill="#62e0d1"/>
+</svg>
