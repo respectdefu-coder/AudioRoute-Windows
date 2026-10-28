@@ -54,7 +54,14 @@ PASS: hidden tray window is restored without duplicate-instance dialog
 PASS: second-launch activation message reaches minimized window
 PASS: minimized window is restored on repeated launch
 PASS: manual switch persists and remains stable without matching rules
+PASS: browse is available for the default process-name trigger
+PASS: clicking browse opens the picker and extracts the executable name
+PASS: path trigger keeps the full selected executable path
+PASS: canceling executable selection keeps the existing pattern
+PASS: file browse hidden for WindowTitle
+PASS: file browse hidden for BrowserTitle
+PASS: file browse hidden for BrowserDomain
 PASS: new rule displays the first available device
 PASS: rule editor saves typed trigger and selected output
 PASS: first launch explicitly displays keep-current fallback option
-All 17 UI integration tests passed. Audio backend was simulated; system audio was not changed.
+All 24 UI integration tests passed. Audio backend was simulated; system audio was not changed.

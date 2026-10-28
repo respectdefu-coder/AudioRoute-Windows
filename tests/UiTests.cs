@@ -66,6 +66,27 @@ internal static class UiTests
             typeof(MainForm).GetMethod("ManualSwitch", BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(AudioDevice) }, null).Invoke(main, new object[] { audio.Enumerate()[0] });
             int calls = audio.SwitchCount; Pump(3300);
             Check(audio.Current == "speaker" && audio.SwitchCount == calls && store.Load().ManualDeviceId == "speaker", "manual switch persists and remains stable without matching rules");
+            int pickerCalls = 0; IWin32Window pickerOwner = null;
+            string pickedFile = @"C:\Apps\Audio Player\My.Player.exe";
+            using (var browserEditor = new RuleDialog(null, audio.Enumerate(), delegate(IWin32Window owner) { pickerCalls++; pickerOwner = owner; return pickedFile; }))
+            {
+                browserEditor.Show(); Application.DoEvents();
+                var browseButton = Field<Button>(browserEditor, "browse");
+                Check(browseButton.Visible && browseButton.Enabled, "browse is available for the default process-name trigger");
+                browseButton.PerformClick();
+                Check(pickerCalls == 1 && pickerOwner == browserEditor && Field<TextBox>(browserEditor, "pattern").Text == "My.Player.exe", "clicking browse opens the picker and extracts the executable name");
+                Field<ComboBox>(browserEditor, "kind").SelectedIndex = (int)TriggerKind.ExecutablePath;
+                browseButton.PerformClick();
+                Check(pickerCalls == 2 && Field<TextBox>(browserEditor, "pattern").Text == pickedFile, "path trigger keeps the full selected executable path");
+                pickedFile = null; browseButton.PerformClick();
+                Check(pickerCalls == 3 && Field<TextBox>(browserEditor, "pattern").Text == @"C:\Apps\Audio Player\My.Player.exe", "canceling executable selection keeps the existing pattern");
+                foreach (TriggerKind textKind in new[] { TriggerKind.WindowTitle, TriggerKind.BrowserTitle, TriggerKind.BrowserDomain })
+                {
+                    Field<ComboBox>(browserEditor, "kind").SelectedIndex = (int)textKind;
+                    Check(!browseButton.Visible, "file browse hidden for " + textKind);
+                }
+                browserEditor.Close();
+            }
             using (var editor = new RuleDialog(null, audio.Enumerate()))
             {
                 editor.Show(); Application.DoEvents();

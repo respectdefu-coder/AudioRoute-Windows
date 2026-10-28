@@ -20,8 +20,12 @@ namespace AudioRoute
         private readonly Label hint = new Label { Dock = DockStyle.Fill, AutoSize = true, ForeColor = Theme.Muted, MaximumSize = new Size(580, 0) };
         private Button browse;
         private readonly Rule source;
+        private readonly Func<IWin32Window, string> executablePicker;
         public RuleDialog(Rule original, List<AudioDevice> devices)
+            : this(original, devices, PickExecutable) { }
+        internal RuleDialog(Rule original, List<AudioDevice> devices, Func<IWin32Window, string> picker)
         {
+            executablePicker = picker;
             source = original ?? new Rule(); Theme.Form(this);
             Text = original == null ? "添加规则" : "编辑规则";
             ClientSize = new Size(680, 570); MinimumSize = new Size(640, 590);
@@ -65,9 +69,12 @@ namespace AudioRoute
         }
         private void UpdateHint()
         {
-            browse.Enabled = kind.SelectedIndex == 1;
+            // 两种应用规则都可以选文件；标题/域名规则不显示不适用的文件按钮。
+            bool fileRule = kind.SelectedIndex == 0 || kind.SelectedIndex == 1;
+            browse.Visible = fileRule;
+            browse.Enabled = fileRule;
             string[] hints = {
-                "例如 vlc 或 vlc.exe。进程仍在后台运行时继续命中；若只想在使用窗口时切换，请勾选“仅当前台”。",
+                "例如 vlc 或 vlc.exe。可点击“浏览”选择程序，自动填写进程名。后台进程仍会命中；只在使用窗口时切换可勾选“仅当前台”。",
                 "按完整路径精确匹配，例如 C:\\Program Files\\VideoLAN\\VLC\\vlc.exe。受保护进程的路径可能无法读取。",
                 "匹配任意可见顶层窗口的标题，不区分大小写。请使用有辨识度的关键字，避免误匹配本工具或其他应用。",
                 "只匹配常见浏览器窗口标题，例如 YouTube、哔哩哔哩。默认允许非前台浏览器窗口；后台标签页不可见。",
@@ -77,8 +84,17 @@ namespace AudioRoute
         }
         private void Browse()
         {
-            using (var dialog = new OpenFileDialog { Filter = "应用程序 (*.exe)|*.exe", CheckFileExists = true })
-                if (dialog.ShowDialog(this) == DialogResult.OK) pattern.Text = dialog.FileName;
+            if (kind.SelectedIndex != 0 && kind.SelectedIndex != 1) return;
+            string fileName = executablePicker(this);
+            if (String.IsNullOrEmpty(fileName)) return; // 取消选择时保留原有内容。
+            pattern.Text = kind.SelectedIndex == 0 ? Path.GetFileName(fileName) : fileName;
+        }
+        private static string PickExecutable(IWin32Window owner)
+        {
+            using (var dialog = new OpenFileDialog {
+                Title = "选择要监听的应用程序", Filter = "应用程序 (*.exe)|*.exe",
+                CheckFileExists = true, Multiselect = false, RestoreDirectory = true })
+                return dialog.ShowDialog(owner) == DialogResult.OK ? dialog.FileName : null;
         }
         private void SaveRule()
         {
